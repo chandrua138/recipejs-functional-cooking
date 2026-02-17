@@ -1,178 +1,166 @@
-// ===============================
-// Recipe Data
-// ===============================
+const RecipeApp = (function () {
 
-const recipes = [
-    { title: "Spaghetti Carbonara", difficulty: "medium", time: 25 },
-    { title: "Grilled Cheese Sandwich", difficulty: "easy", time: 10 },
-    { title: "Chicken Biryani", difficulty: "hard", time: 60 },
-    { title: "Pancakes", difficulty: "easy", time: 20 },
-    { title: "Caesar Salad", difficulty: "easy", time: 15 },
-    { title: "Beef Wellington", difficulty: "hard", time: 90 },
-    { title: "Tomato Soup", difficulty: "medium", time: 35 },
-    { title: "Stir Fry Vegetables", difficulty: "medium", time: 30 }
-];
+    console.log("RecipeApp initializing...");
 
-// ===============================
-// State Management
-// ===============================
+    // ===============================
+    // Recipe Data (Enhanced)
+    // ===============================
 
-let currentFilter = "all";
-let currentSort = "none";
-
-// ===============================
-// DOM References
-// ===============================
-
-const recipeContainer = document.getElementById("recipe-container");
-const filterButtons = document.querySelectorAll("[data-filter]");
-const sortButtons = document.querySelectorAll("[data-sort]");
-
-// ===============================
-// Render Function
-// ===============================
-
-const renderRecipes = (recipesArray) => {
-    recipeContainer.innerHTML = "";
-
-    recipesArray.forEach(recipe => {
-        const card = document.createElement("div");
-        card.classList.add("recipe-card");
-
-        card.innerHTML = `
-            <h3>${recipe.title}</h3>
-            <p><strong>Difficulty:</strong> ${recipe.difficulty}</p>
-            <p><strong>Time:</strong> ${recipe.time} mins</p>
-        `;
-
-        recipeContainer.appendChild(card);
-    });
-};
-
-// ===============================
-// Pure Filter Functions
-// ===============================
-
-const filterByDifficulty = (recipes, difficulty) => {
-    return recipes.filter(recipe => recipe.difficulty === difficulty);
-};
-
-const filterByTime = (recipes, maxTime) => {
-    return recipes.filter(recipe => recipe.time < maxTime);
-};
-
-const applyFilter = (recipes, filterType) => {
-    switch (filterType) {
-        case "easy":
-        case "medium":
-        case "hard":
-            return filterByDifficulty(recipes, filterType);
-        case "quick":
-            return filterByTime(recipes, 30);
-        default:
-            return recipes;
-    }
-};
-
-// ===============================
-// Pure Sort Functions
-// ===============================
-
-const sortByName = (recipes) => {
-    return [...recipes].sort((a, b) =>
-        a.title.localeCompare(b.title)
-    );
-};
-
-const sortByTime = (recipes) => {
-    return [...recipes].sort((a, b) =>
-        a.time - b.time
-    );
-};
-
-const applySort = (recipes, sortType) => {
-    switch (sortType) {
-        case "name":
-            return sortByName(recipes);
-        case "time":
-            return sortByTime(recipes);
-        default:
-            return recipes;
-    }
-};
-
-// ===============================
-// Update Display (Main Controller)
-// ===============================
-
-const updateDisplay = () => {
-    let recipesToDisplay = recipes;
-
-    recipesToDisplay = applyFilter(recipesToDisplay, currentFilter);
-    recipesToDisplay = applySort(recipesToDisplay, currentSort);
-
-    renderRecipes(recipesToDisplay);
-
-    console.log(
-        `Displaying ${recipesToDisplay.length} recipes (Filter: ${currentFilter}, Sort: ${currentSort})`
-    );
-};
-
-// ===============================
-// Active Button UI Update
-// ===============================
-
-const updateActiveButtons = () => {
-    filterButtons.forEach(btn => {
-        btn.classList.remove("active");
-        if (btn.dataset.filter === currentFilter) {
-            btn.classList.add("active");
+    const recipes = [
+        {
+            id: 1,
+            title: "Spaghetti Carbonara",
+            difficulty: "medium",
+            time: 25,
+            ingredients: ["Spaghetti", "Eggs", "Parmesan", "Pancetta", "Black Pepper"],
+            steps: [
+                "Boil water",
+                "Cook spaghetti",
+                {
+                    text: "Prepare sauce",
+                    substeps: [
+                        "Beat eggs",
+                        "Add cheese",
+                        "Mix well"
+                    ]
+                },
+                "Combine pasta and sauce",
+                "Serve hot"
+            ]
+        },
+        {
+            id: 2,
+            title: "Grilled Cheese Sandwich",
+            difficulty: "easy",
+            time: 10,
+            ingredients: ["Bread", "Cheese", "Butter"],
+            steps: [
+                "Butter bread",
+                "Place cheese between slices",
+                "Grill until golden",
+                "Serve warm"
+            ]
+        },
+        {
+            id: 3,
+            title: "Chicken Biryani",
+            difficulty: "hard",
+            time: 60,
+            ingredients: ["Rice", "Chicken", "Spices", "Onion", "Yogurt"],
+            steps: [
+                "Marinate chicken",
+                {
+                    text: "Prepare rice",
+                    substeps: [
+                        "Boil water",
+                        "Add spices",
+                        "Cook rice halfway"
+                    ]
+                },
+                "Layer rice and chicken",
+                "Cook on low heat",
+                "Serve hot"
+            ]
+        },
+        {
+            id: 4,
+            title: "Pancakes",
+            difficulty: "easy",
+            time: 20,
+            ingredients: ["Flour", "Milk", "Eggs", "Sugar", "Butter"],
+            steps: [
+                "Mix ingredients",
+                "Heat pan",
+                "Pour batter",
+                "Flip pancake",
+                "Serve with syrup"
+            ]
+        },
+        {
+            id: 5,
+            title: "Caesar Salad",
+            difficulty: "easy",
+            time: 15,
+            ingredients: ["Lettuce", "Croutons", "Parmesan", "Caesar dressing"],
+            steps: [
+                "Chop lettuce",
+                "Add croutons",
+                "Add dressing",
+                "Mix well",
+                "Serve fresh"
+            ]
+        },
+        {
+            id: 6,
+            title: "Beef Wellington",
+            difficulty: "hard",
+            time: 90,
+            ingredients: ["Beef fillet", "Mushrooms", "Puff pastry", "Egg yolk"],
+            steps: [
+                "Sear beef",
+                {
+                    text: "Prepare mushroom duxelles",
+                    substeps: [
+                        "Chop mushrooms",
+                        "Cook until dry",
+                        {
+                            text: "Season mixture",
+                            substeps: [
+                                "Add salt",
+                                "Add pepper"
+                            ]
+                        }
+                    ]
+                },
+                "Wrap in pastry",
+                "Bake until golden",
+                "Rest before slicing"
+            ]
+        },
+        {
+            id: 7,
+            title: "Tomato Soup",
+            difficulty: "medium",
+            time: 35,
+            ingredients: ["Tomatoes", "Onion", "Garlic", "Cream"],
+            steps: [
+                "Chop vegetables",
+                "Cook vegetables",
+                "Blend mixture",
+                "Simmer",
+                "Add cream and serve"
+            ]
+        },
+        {
+            id: 8,
+            title: "Stir Fry Vegetables",
+            difficulty: "medium",
+            time: 30,
+            ingredients: ["Mixed vegetables", "Soy sauce", "Garlic", "Oil"],
+            steps: [
+                "Heat oil",
+                "Add garlic",
+                "Add vegetables",
+                "Stir fry",
+                "Add soy sauce and serve"
+            ]
         }
-    });
+    ];
 
-    sortButtons.forEach(btn => {
-        btn.classList.remove("active");
-        if (btn.dataset.sort === currentSort) {
-            btn.classList.add("active");
-        }
-    });
-};
+    // ===============================
+    // State
+    // ===============================
 
-// ===============================
-// Event Handlers
-// ===============================
+    let currentFilter = "all";
+    let currentSort = "none";
 
-const handleFilterClick = (event) => {
-    currentFilter = event.target.dataset.filter;
-    updateActiveButtons();
-    updateDisplay();
-};
+    const recipeContainer = document.getElementById("recipe-container");
+    const filterButtons = document.querySelectorAll("[data-filter]");
+    const sortButtons = document.querySelectorAll("[data-sort]");
 
-const handleSortClick = (event) => {
-    currentSort = event.target.dataset.sort;
-    updateActiveButtons();
-    updateDisplay();
-};
+    // ===============================
+    // Recursive Step Renderer
+    // ===============================
 
-// ===============================
-// Setup Event Listeners
-// ===============================
-
-const setupEventListeners = () => {
-    filterButtons.forEach(button =>
-        button.addEventListener("click", handleFilterClick)
-    );
-
-    sortButtons.forEach(button =>
-        button.addEventListener("click", handleSortClick)
-    );
-};
-
-// ===============================
-// Initialization
-// ===============================
-
-document.addEventListener("DOMContentLoaded", () => {
-    setupEventListeners();
-    updateDisplay();
-});
+    const renderSteps = (steps, level = 0) => {
+        let html
